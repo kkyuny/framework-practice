@@ -89,46 +89,46 @@
 - 주요 테스트 메서드 설명
 1. 어노테이션이 붙은 클래스 스캔
    ```java
-    @Target(ElementType.TYPE)
-    @Retention(RetentionPolicy.RUNTIME) // 유지기간 설정
-      public @interface Controller {
-    }
+       @Target(ElementType.TYPE)
+       @Retention(RetentionPolicy.RUNTIME) // 유지기간 설정
+       public @interface Controller {
+       }
    ```
    - 컨트롤러 어노테이션 선언이며 `클래스`, `인터페이스`, `enum` 등의 타입에만 붙을 수 있으며, 런타임까지 유지된다는 의미(리플렉션 가능)
    ```java
-    Reflections reflections = new Reflections("com.example");
-    Set<Class<?>> beans = new HashSet<>();
-    annotations.forEach(annotation -> beans.addAll(reflections.getTypesAnnotatedWith(annotation)));
+       Reflections reflections = new Reflections("com.example");
+       Set<Class<?>> beans = new HashSet<>();
+       annotations.forEach(annotation -> beans.addAll(reflections.getTypesAnnotatedWith(annotation)));
    ```
    - org.reflections.Reflections 라이브러리를 사용해 com.example 패키지 하위에서 @Controller, @Service 애노테이션이 붙은 클래스를 모두 탐색
 
 2. 일반 객체(클래스) 스캔
    ```java
-     Class<User> clazz = User.class;
+       Class<User> clazz = User.class;
 
-     User user = new User("serverwizard", "kyun");
-     Class<? extends User> clazz2 = user.getClass();
+       User user = new User("serverwizard", "kyun");
+       Class<? extends User> clazz2 = user.getClass();
 
-     Class<?> clazz3 = Class.forName("com.example.model.User");
+       Class<?> clazz3 = Class.forName("com.example.model.User");
    ```
    - 힙 영역에 로드되어있는 클래스 타입 객체를 로드하는 3가지 방법
    ```java
-     Class<User> clazz = User.class;
-     logger.debug("class: [{}]", clazz.getName());
-  
-     logger.debug("User all declared fields: [{}]", Arrays.stream(clazz.getDeclaredFields()).collect(Collectors.toSet()));
-     logger.debug("User all declared constructors: [{}]", Arrays.stream(clazz.getDeclaredConstructors()).collect(Collectors.toSet()));
-     logger.debug("User all declared methods: [{}]", Arrays.stream(clazz.getDeclaredMethods()).collect(Collectors.toSet()));
+       Class<User> clazz = User.class;
+
+       logger.debug("class: [{}]", clazz.getName());
+       logger.debug("User all declared fields: [{}]", Arrays.stream(clazz.getDeclaredFields()).collect(Collectors.toSet()));
+       logger.debug("User all declared constructors: [{}]", Arrays.stream(clazz.getDeclaredConstructors()).collect(Collectors.toSet()));
+       logger.debug("User all declared methods: [{}]", Arrays.stream(clazz.getDeclaredMethods()).collect(Collectors.toSet()));
    ```
    - User 클래스의 필드, 생성자, 메서드 정보를 런타임에 조회할 수 있다.
    - getDeclaredXxx()는 private 포함 모든 선언된 정보를 가져옴
 
 3. 핵심 요약
-   - Class.forName(): 클래스 이름 문자열로 클래스 객체 로딩
-   - getClass(): 인스턴스 기반 클래스 객체 획득
+   - Class.forName(패키지경로): 클래스 이름 문자열로 클래스 객체 로딩
+   - 객체.class: 클래스 이름으로 객체 획득 
+   - 인스턴스.getClass(): 인스턴스 기반 클래스 객체 획득
    - getDeclaredXXX():	필드, 생성자, 메서드 정보 조회
-   - isAnnotationPresent():	특정 애노테이션 존재 여부 확인
-   - 외부 Reflections: 패키지 기준 애노테이션 스캔 가능
+   - Reflections.getTypesAnnotatedWith(...): 패키지 기준 애노테이션 스캔 가능
    
 ### 02. 프런트 컨트롤러 패턴
 - forward vs redirect 방식
