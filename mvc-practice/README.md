@@ -131,10 +131,35 @@
    - Reflections.getTypesAnnotatedWith(...): 패키지 기준 애노테이션 스캔 가능
    
 ### 02~3. 프런트 컨트롤러 패턴
+- 로그백 설정
+  - ✅ logback.xml이란?
+    - Logback 로깅 프레임워크의 설정 파일
+    - 로그의 출력 대상, 출력 형식, 로그 레벨 등을 정의
+  - ✅ 주요 구성 요소
+    - <appender>
+      로그를 어디에 출력할지 지정
+      예: 콘솔, 파일, DB 등
+    - <logger>
+      특정 패키지나 클래스에 대한 로그 레벨 지정  
+    - <root>
+      전체 애플리케이션의 기본 로그 레벨 및 Appender 연결 
+  - ✅ 예시 요약
+  ``` xml
+      <appender name="STDOUT" class="ConsoleAppender">  ← 콘솔 출력
+      <logger name="org.example" level="DEBUG"/>        ← 특정 패키지 DEBUG 출력
+      <root level="INFO">                                ← 기본 로그는 INFO 이상
+  ```
 - forward vs redirect 방식
-![img.png](img.png)
-  - forward는 서버 내부에서 일어나기 때문에 기존의 리퀘스트와 리스폰스를 재사용
-  - redirect는 해당 요청을 다시 브라우저가 요청을 진행하는 방식으로 리퀘스트와 리스폰스를 새롭게 생성
 
+![img.png](img.png)
+| 항목        | forward                          | redirect                           |
+|-------------|-----------------------------------|-------------------------------------|
+| 동작 방식   | 서버 내부에서 이동                | 클라이언트가 새 요청을 보내도록 유도 |
+| 요청/응답   | 기존 Request/Response 재사용      | 새로운 Request/Response 생성         |
+| URL 변경    | 변경되지 않음                     | 변경됨                              |
+| 속도        | 빠름                              | 상대적으로 느림                     |
+| 주 용도     | 내부 자원 이동 (예: JSP 연결)       | 외부 이동, PRG 패턴 등               |
+
+- 
 ### 04~5. MVC 프레임 워크 만들기
 ![img_1.png](img_1.png)
