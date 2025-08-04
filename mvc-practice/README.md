@@ -130,8 +130,11 @@
    - isAnnotationPresent():	특정 애노테이션 존재 여부 확인
    - 외부 Reflections: 패키지 기준 애노테이션 스캔 가능
    
-### 02. 프런트 컨트롤러 패턴
+### 02~3. 프런트 컨트롤러 패턴
 - forward vs redirect 방식
 ![img.png](img.png)
   - forward는 서버 내부에서 일어나기 때문에 기존의 리퀘스트와 리스폰스를 재사용
   - redirect는 해당 요청을 다시 브라우저가 요청을 진행하는 방식으로 리퀘스트와 리스폰스를 새롭게 생성
+
+### 04~5. MVC 프레임 워크 만들기
+![img_1.png](img_1.png)
