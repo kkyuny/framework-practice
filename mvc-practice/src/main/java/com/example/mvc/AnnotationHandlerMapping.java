@@ -1,5 +1,6 @@
 package com.example.mvc;
 
+import com.example.mvc.annotation.Controller;
 import com.example.mvc.annotation.RequestMapping;
 import com.example.mvc.controller.RequestMethod;
 import org.reflections.Reflections;
@@ -21,7 +22,7 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         Reflections reflections = new Reflections(basePackage);
 
-        Set<Class<?>> clazzesWithControllerAnnotation = reflections.getTypesAnnotatedWith(com.example.mvc.annotation.Controller.class, true);
+        Set<Class<?>> clazzesWithControllerAnnotation = reflections.getTypesAnnotatedWith(Controller.class, true);
 
         System.out.println("=== 컨트롤러 클래스 수: " + clazzesWithControllerAnnotation.size());
         clazzesWithControllerAnnotation.forEach(c -> System.out.println(" → 클래스: " + c.getName()));
@@ -38,7 +39,6 @@ public class AnnotationHandlerMapping implements HandlerMapping {
                                 AnnotationHandler handler = new AnnotationHandler(clazz, declaredMethod);
                                 handlers.put(key, handler);
 
-                                // ✅ 등록된 핸들러 로그
                                 System.out.println(" → 핸들러 등록됨: " + key + " → " + clazz.getSimpleName() + "#" + declaredMethod.getName());
                             });
                 })
