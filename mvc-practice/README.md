@@ -1,35 +1,28 @@
 # 나만의 MVC 프레임워크 만들기
-
-## Ch01~2. 강의 소개 및 개발환경 구성하기
-
-### 🎯 학습 목표
+## 강의 소개 및 개발환경 구성하기
+### 학습 목표
 1. 객체 지향 이해
 2. HTTP 프로토콜 및 HTTP 웹 서버 동작 원리 이해
 3. MVC 구조 및 DI 내부 동작 이해
 
-## 🐳 도커(Docker)
+### 도커(Docker)
 
-### 🔹 컨테이너 기반의 가상화 플랫폼
+### 컨테이너 기반의 가상화 플랫폼
 - 앱은 **도커 엔진**을 통해 OS 자원을 사용함
 - 여러 개의 프로세스를 **동시에 실행**하기 위한 도구 → `docker-compose`로 관리 가능
 
-### 🔹 하이퍼바이저 기반의 가상화 플랫폼과 비교
+### 하이퍼바이저 기반의 가상화 플랫폼과 비교
 - **하이퍼바이저 방식**은 게스트 OS와 호스트 OS가 각각 존재
 - 반면, **도커는 호스트 OS 커널을 공유**하는 방식
 
-## ⚙️ 톰캣 설정
-
-### 🔧 Output Path 설정
-- 경로: `Project Settings → Modules → output path` 지정
-
-### 📁 톰캣 8의 표준 경로
+### 톰캣 설정
+- Output Path 설정
+    - 경로: `Project Settings → Modules → output path` 지정
+- 톰캣 8의 표준 경로
 - `/webapps/WEB-INF/classes`
-
-### 🧩 작동 방식
-- 서버 실행 시, 해당 경로에 `.class` 파일이 생성됨
-- 톰캣은 해당 경로의 `.class` 파일을 읽어 **서버를 실행**
-
----
+- 작동 방식
+    - 서버 실행 시, 해당 경로에 `.class` 파일이 생성됨
+    - 톰캣은 해당 경로의 `.class` 파일을 읽어 **서버를 실행**
 
 ## Ch03. 객체지향 패러다임
 
@@ -79,7 +72,7 @@
     - 구현하기
 
 ## Ch06. MVC 프레임워크 만들기
-### 01. 리플렉션 API 개념 소개 및 실습
+### 리플렉션 API 개념 소개 및 실습
 - 리플렉션(Reflection)이란?
   - 리플렉션은 자바에서 런타임에 클래스, 메서드, 필드 등의 정보를 조회하거나 조작할 수 있는 기능을 말함.
   - 주요 용도
@@ -130,7 +123,7 @@
    - getDeclaredXXX():	필드, 생성자, 메서드 정보 조회
    - Reflections.getTypesAnnotatedWith(...): 패키지 기준 애노테이션 스캔 가능
    
-### 02~3. 프런트 컨트롤러 패턴
+## 프런트 컨트롤러 패턴
 - 로그백 설정
   - ✅ logback.xml이란?
     - Logback 로깅 프레임워크의 설정 파일
@@ -161,13 +154,13 @@
 | 주 용도     | 내부 자원 이동 (예: JSP 연결)       | 외부 이동, PRG 패턴 등               |
 
 
-### 04~5. MVC 프레임 워크 만들기
+## MVC 프레임 워크 만들기
 ![img_1.png](img_1.png)
-## DispatcherServlet 전체 요청 처리 흐름
+### DispatcherServlet 전체 요청 처리 흐름
 ```
 [HTTP 요청] → DispatcherServlet → HandlerMapping → HandlerAdapter → Controller 실행 → 처리내용 반환 → ViewResolver → View 렌더링 → [HTTP 응답]
 ```
-## DispatchServlet 기본구조
+### DispatchServlet 기본구조
 ``` java
 @WebServlet("/")
 public class DispatcherServlet extends HttpServlet {
@@ -184,7 +177,7 @@ public class DispatcherServlet extends HttpServlet {
 - `HttpServlet`을 상속
 - 톰캣이 실행되면 `init()` 실행
 - 클라이언트의 요청이 오면 `service()`를 호출
-## DispatcherServlet init() - 컴포넌트 초기화
+### DispatcherServlet init() - 컴포넌트 초기화
 ``` java
 @Override
 public void init() {
@@ -269,7 +262,7 @@ public class HomeController {
     - 찾은 handler(컨트롤러 객체)를 실제로 "어떻게 실행할지" 결정.
 5. `viewResolvers = Collections.singletonList(new JspViewResolver())`
     - view를 처리할 viewResolvers을 생성
-## DispatcherServlet service() - 클라이언트 요청 처리
+### DispatcherServlet service() - 클라이언트 요청 처리
 ``` java
 @Override
 protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
@@ -313,3 +306,4 @@ protected void service(HttpServletRequest request, HttpServletResponse response)
    - jsp는 `forward`으로 처리(request.getRequestDispatcher(name).forward(request, response))
    - 리다이렉트는 `sendRedirect`로 처리(response.sendRedirect(name))
    - model의 data 처리는 모델엔뷰에서 처리하는 것이 아닌 request에서 처리한다.(모델엔뷰에서 처리하는 것이 맞는 것 같음.)
+6. 느낀점: 디스패쳐 서블릿의 동작과정을 스프링 없이 이해 해보았다. 스프링을 이용한 실제 실무에서 해당 개념을 잘 떠올려봐야겠다. 
