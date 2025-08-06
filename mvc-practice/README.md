@@ -160,7 +160,7 @@
 | 속도        | 빠름                              | 상대적으로 느림                     |
 | 주 용도     | 내부 자원 이동 (예: JSP 연결)       | 외부 이동, PRG 패턴 등               |
 
-- 
+
 ### 04~5. MVC 프레임 워크 만들기
 ![img_1.png](img_1.png)
 ## DispatcherServlet 전체 요청 처리 흐름
@@ -300,16 +300,16 @@ protected void service(HttpServletRequest request, HttpServletResponse response)
     }
 }
 ```
-1. 요청 URI + METHOD 추출
-2. HandlerMapping 통해 handler(컨트롤러) 탐색
+1. `요청 URI + METHOD 추출`
+2. `HandlerMapping 통해 handler(컨트롤러) 탐색`
    - 등록된 `handlerMappings`들을 순회하면서, `requestURI + METHOD`에 해당하는 컨트롤러(handler)를 찾음
    - 없으면 예외처리(500 에러 발생)
-3. HandlerAdapter 통해 handler 실행
+3. `HandlerAdapter 통해 handler 실행`
    - 찾은 handler를 실제로 실행시킬 수 있는 `HandlerAdapter` 탐색
    - `supports(handler)`로 일치하는 객체타입의 핸들러 확인
    - 없으면 예외처리
-4. ModelAndView 반환: handlerAdapter로 해당하는 컨트롤러의 view name 값을 가져온다.
-5. View.render() 실행 → 응답 생성
+4. `ModelAndView 반환`: handlerAdapter로 해당하는 컨트롤러의 view name 값을 가져온다.
+5. `View.render() 실행`: 응답 생성
    - jsp는 `forward`으로 처리(request.getRequestDispatcher(name).forward(request, response))
    - 리다이렉트는 `sendRedirect`로 처리(response.sendRedirect(name))
    - model의 data 처리는 모델엔뷰에서 처리하는 것이 아닌 request에서 처리한다.(모델엔뷰에서 처리하는 것이 맞는 것 같음.)
