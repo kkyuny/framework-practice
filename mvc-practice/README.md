@@ -163,4 +163,153 @@
 - 
 ### 04~5. MVC 프레임 워크 만들기
 ![img_1.png](img_1.png)
-- 디스팻쳐 서블링 -> 핸들러 매핑 -> 선택한 핸들러를 디스패쳐 서블링으로 리턴 -> 핸들러 어댑터 -> 컨트롤러 실행 -> view name 리턴
+## DispatcherServlet 전체 요청 처리 흐름
+```
+[HTTP 요청] → DispatcherServlet → HandlerMapping → HandlerAdapter → Controller 실행 → 처리내용 반환 → ViewResolver → View 렌더링 → [HTTP 응답]
+```
+## DispatchServlet 기본구조
+``` java
+@WebServlet("/")
+public class DispatcherServlet extends HttpServlet {
+    @Override
+    public void init() {
+        // 초기화 로직
+    }
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        // 요청 처리 로직
+    }
+```
+- `HttpServlet`을 상속
+- 톰캣이 실행되면 `init()` 실행
+- 클라이언트의 요청이 오면 `service()`를 호출
+## DispatcherServlet init() - 컴포넌트 초기화
+``` java
+@Override
+public void init() {
+    RequestMappingHandlerMapping rmhm = new RequestMappingHandlerMapping();
+    rmhm.init();
+
+    AnnotationHandlerMapping ahm = new AnnotationHandlerMapping("com.example.mvc");
+    ahm.initialize();
+
+    handlerMappings = List.of(rmhm, ahm);
+    handlerAdapters = List.of(new SimpleControllerHandlerAdapter(), new AnnotationHandlerAdapter());
+    viewResolvers = Collections.singletonList(new JspViewResolver());
+}
+```
+1. `RequestMappringHandlerMapping`: 전통적인 방식으로 URL과 컨트롤러 매핑
+``` java
+public class RequestMappingHandlerMapping implements HandlerMapping {
+    private Map<HandlerKey, Controller> mappings = new HashMap<>();
+
+    void init() {
+        mappings.put(new HandlerKey("/user/form", RequestMethod.GET), new ForwardController("/user/form"));
+        mappings.put(new HandlerKey("/users", RequestMethod.GET), new UserListController());
+        mappings.put(new HandlerKey("/users", RequestMethod.POST), new UserCreateController());
+    }
+}
+```
+- URL + HTTP Method 를 기준으로 컨트롤러 매핑
+- Controller 예시(UserListController)
+``` java
+public class UserListController implements Controller {
+
+    @Override
+    public String handleRequest(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        req.setAttribute("users", UserRepository.findAll());
+        return "/user/list";
+    }
+}
+```
+    - `users` 리스트를 request에 설정
+    - 뷰 이름(`/user/list`) 반환
+2. `AnnotationHandlerMapping`: 어노테이션 기반으로 매핑
+``` java
+public class AnnotationHandlerMapping implements HandlerMapping {
+    public void initialize() {
+        Reflections reflections = new Reflections(basePackage);
+
+        Set<Class<?>> clazzesWithControllerAnnotation = reflections.getTypesAnnotatedWith(Controller.class, true);
+
+        clazzesWithControllerAnnotation.forEach(clazz ->
+                Arrays.stream(clazz.getDeclaredMethods()).forEach(declaredMethod -> {
+                    RequestMapping requestMappingAnnotation = declaredMethod.getDeclaredAnnotation(RequestMapping.class);
+
+                    if (requestMappingAnnotation == null) return; // 예외 처리
+
+                    Arrays.stream(getRequestMethods(requestMappingAnnotation))
+                            .forEach(requestMethod -> {
+                                HandlerKey key = new HandlerKey(requestMappingAnnotation.value(), requestMethod);
+                                AnnotationHandler handler = new AnnotationHandler(clazz, declaredMethod);
+                                handlers.put(key, handler);
+                            });
+                })
+        );
+    }
+}
+```
+    - 리플렉션을 이용하여 `@Controller`이 붙은 클래스를 탐색
+    - 탐색한 클래스를 핸들러에 등록
+    - Controller 예시(HomeController)
+``` java
+@Controller
+public class HomeController {
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("users", UserRepository.findAll());
+        return "home";
+    }
+}
+```
+3. `handlerMappings = List.of(rmhm, ahm)`
+    - 찾은 컨트롤러 객체를 리스트에 등록
+4. `andlerAdapters = List.of(new SimpleControllerHandlerAdapter(), new AnnotationHandlerAdapter())`
+    - 찾은 handler(컨트롤러 객체)를 실제로 "어떻게 실행할지" 결정.
+5. `viewResolvers = Collections.singletonList(new JspViewResolver())`
+    - view를 처리할 viewResolvers을 생성
+## DispatcherServlet service() - 클라이언트 요청 처리
+``` java
+@Override
+protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    String requestURI = request.getRequestURI();
+    RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod());
+
+    Object handler = handlerMappings.stream()
+            .filter(hm -> hm.findHandler(new HandlerKey(requestURI, requestMethod)) != null)
+            .map(hm -> hm.findHandler(new HandlerKey(requestURI, requestMethod)))
+            .findFirst()
+            .orElseThrow(() -> new ServletException("No handler for [" + requestMethod + ", " + requestURI + "]"));
+
+    try {
+        HandlerAdapter handlerAdapter = handlerAdapters.stream()
+                .filter(ha -> ha.supports(handler))
+                .findFirst()
+                .orElseThrow(() -> new ServletException("No adapter for handler [" + handler + "]"));
+
+        ModelAndView modelAndView = handlerAdapter.handle(request, response, handler);
+
+        for (ViewResolver viewResolver : this.viewResolvers) {
+            View view = viewResolver.resolveViewName(modelAndView.getViewName());
+            view.render(modelAndView.getModel(), request, response);
+        }
+    } catch (Throwable e) {
+        logger.error("exception occurred: [{}]", e.getMessage(), e);
+        throw new ServletException(e);
+    }
+}
+```
+1. 요청 URI + METHOD 추출
+2. HandlerMapping 통해 handler(컨트롤러) 탐색
+   - 등록된 `handlerMappings`들을 순회하면서, `requestURI + METHOD`에 해당하는 컨트롤러(handler)를 찾음
+   - 없으면 예외처리(500 에러 발생)
+3. HandlerAdapter 통해 handler 실행
+   - 찾은 handler를 실제로 실행시킬 수 있는 `HandlerAdapter` 탐색
+   - `supports(handler)`로 일치하는 객체타입의 핸들러 확인
+   - 없으면 예외처리
+4. ModelAndView 반환: handlerAdapter로 해당하는 컨트롤러의 view name 값을 가져온다.
+5. View.render() 실행 → 응답 생성
+   - jsp는 `forward`으로 처리(request.getRequestDispatcher(name).forward(request, response))
+   - 리다이렉트는 `sendRedirect`로 처리(response.sendRedirect(name))
+   - model의 data 처리는 모델엔뷰에서 처리하는 것이 아닌 request에서 처리한다.(모델엔뷰에서 처리하는 것이 맞는 것 같음.)
