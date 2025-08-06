@@ -155,7 +155,7 @@
 
 ## MVC 프레임 워크 만들기
 ![img_1.png](img_1.png)
-### DispatcherServlet 전체 요청 처리 흐름
+### DispatcherServlet 전체 요청 처리 흐름(view 렌더링에 초점된 서블릿)
 ```
 [HTTP 요청] → DispatcherServlet → HandlerMapping → HandlerAdapter → Controller 실행 → 처리내용 반환 → ViewResolver → View 렌더링 → [HTTP 응답]
 ```
@@ -304,5 +304,5 @@ protected void service(HttpServletRequest request, HttpServletResponse response)
 5. `View.render() 실행`: 응답 생성
    - jsp는 `forward`으로 처리(request.getRequestDispatcher(name).forward(request, response))
    - 리다이렉트는 `sendRedirect`로 처리(response.sendRedirect(name))
-   - model의 data 처리는 모델엔뷰에서 처리하는 것이 아닌 request에서 처리한다.(모델엔뷰에서 처리하는 것이 맞는 것 같음.)
+   - model의 data 처리는 모델엔뷰에서 처리하는 것이 아닌 request에서 처리한다.
 6. 느낀점: 디스패쳐 서블릿의 동작과정을 스프링 없이 이해 해보았다. 스프링을 이용한 실제 실무에서 해당 개념을 잘 떠올려봐야겠다. 
