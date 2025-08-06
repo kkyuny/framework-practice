@@ -146,7 +146,7 @@
   - ✅ 예시 요약
   ``` xml
       <appender name="STDOUT" class="ConsoleAppender">  ← 콘솔 출력
-      <logger name="org.example" level="DEBUG"/>        ← 특정 패키지 DEBUG 출력
+      <logger name="com.example" level="DEBUG"/>        ← 특정 패키지 DEBUG 출력
       <root level="INFO">                                ← 기본 로그는 INFO 이상
   ```
 - forward vs redirect 방식
@@ -163,3 +163,4 @@
 - 
 ### 04~5. MVC 프레임 워크 만들기
 ![img_1.png](img_1.png)
+- 디스팻쳐 서블링 -> 핸들러 매핑 -> 선택한 핸들러를 디스패쳐 서블링으로 리턴 -> 핸들러 어댑터 -> 컨트롤러 실행 -> view name 리턴

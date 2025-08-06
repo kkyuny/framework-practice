@@ -7,7 +7,7 @@
         </layout>
     </appender>
 
-    <logger name="org.example" level="DEBUG"/>
+    <logger name="com.example" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
