@@ -25,41 +25,41 @@
 
 ## Ch03. 객체지향 패러다임
 ### 객체지향 4가지 특성
-1. 추상화 (Abstraction)  
+1. `추상화` (Abstraction)  
 - 불필요한 부분을 제거하고, 필요한 부분만 남기는 것  
 - 복잡성을 낮추고 핵심 개념에 집중
 
-2. 다형성 (Polymorphism)  
+2. `다형성` (Polymorphism)  
 - 하나의 인터페이스나 메서드가 여러 형태로 동작할 수 있는 능력  
 - 예: 메서드 오버로딩, 오버라이딩
 
-3. 캡슐화 (Encapsulation)  
+3. `캡슐화` (Encapsulation)  
 - 객체의 세부 구현을 외부에 감추고, 필요한 인터페이스만 제공  
 - 데이터 보호 및 변경 용이성 확보
 
-4. 상속 (Inheritance)  
+4. `상속` (Inheritance)  
 - 상위 클래스(부모)의 속성과 메서드를 하위 클래스(자식)가 물려받는 것  
 - 코드 재사용성 향상
 
 ### 객체지향 5원칙 (SOLID)
-1. SRP: 단일 책임 원칙 (Single Responsibility Principle)  
+1. `SRP(Single Responsibility Principle)`: 단일 책임 원칙 
 - 클래스는 하나의 책임만 가져야 함  
 - 변경의 이유가 하나만 존재해야 함
 
-2. OCP: 개방-폐쇄 원칙 (Open/Closed Principle)  
+2. `OCP(Open/Closed Principle)`: 개방-폐쇄 원칙   
 - 확장에는 열려 있고, 변경에는 닫혀 있어야 함  
 - 기존 코드를 수정하지 않고 기능을 확장할 수 있어야 함
 
-3. LSP: 리스코프 치환 원칙 (Liskov Substitution Principle)  
+3. `LSP(Liskov Substitution Principle)`: 리스코프 치환 원칙   
 - 하위 타입 객체는 상위 타입 객체로 치환 가능해야 함 (업캐스팅)  
 - 다운캐스팅은 런타임 오류 가능성이 있어 주의 필요  
 - 예: "모든 사각형은 직사각형이다"라는 잘못된 일반화는 LSP 위반 가능성
 
-4. ISP: 인터페이스 분리 원칙 (Interface Segregation Principle)  
+4. `ISP(Interface Segregation Principle)`: 인터페이스 분리 원칙 
 - 한 개의 큰 인터페이스보다 여러 개의 작은 인터페이스로 분리  
 - 불필요한 의존성을 줄이고 필요한 기능만 구현
 
-5. DIP: 의존성 역전 원칙 (Dependency Inversion Principle)  
+5. `DIP(Dependency Inversion Principle)`: 의존성 역전 원칙   
 - 변화가 적은 추상(인터페이스, 상위 모듈)에 의존해야 함  
 - 구체 클래스가 아닌 상위 레이어에서 의존성 주입(DI)을 통해 결정
 
