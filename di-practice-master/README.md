@@ -21,7 +21,7 @@ public BeanFactory(Set<Class<?>> preInstantiatedBeans) {
 - `initialize()` 호출로 실제 인스턴스 생성 및 등록 시작
 
 3. initialize()
-```
+``` java
 @SuppressWarnings("unchecked")
 public void initialize() {
     for (Class<?> clazz : preInstantiatedBeans) {
